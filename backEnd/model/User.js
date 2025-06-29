@@ -6,10 +6,73 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const UserSchema = new mongoose.Schema({
-    firstName: {type: String, required: true},
-    email: {type: String, required: true},
-    password: {type: String, required: true},
-    role: {type: String, required: true},
+  firstName: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
+  password: {
+    type: String,
+  },
+
+  isOnBoarded: {
+    type: Boolean,
+    default: false,
+  },
+
+  role: {
+    type: String,
+    enum: ['creator', 'contributor'],
+  },
+
+  phoneNumber: {
+    type: String,
+  },
+
+  location: {
+    type: String,
+  },
+
+  linkedin: {
+    type: String,
+  },
+
+  github: {
+    type: String,
+  },
+
+  about: {
+    type: String,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+
+  creatorProfile: {
+    company_name: String,
+    company_bio: String,
+    location: String,
+    website: String,
+  },
+
+  contributorProfile: {
+    skills: [String],
+    projects: String,
+    experience: Number,
+  }
 });
 
 UserSchema.methods.generateAuthToken = function(){
