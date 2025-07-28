@@ -25,10 +25,32 @@ const upload = multer({ storage });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const MongoDbUri =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/skillSync";
+  import.meta.env.MONGODB_URI || "mongodb://localhost:27017/skillSync";
+
+const allowedOrigins = [
+  "http://c004cwsgsckog8kk8cw4sswo.147.93.104.185.sslip.io", // Your frontend URL
+  // Add your custom frontend domain here when you set it up, e.g., "https://yourdomain.com"
+  "http://localhost:5173", // For local development (if you use Vite's default dev port)
+  "http://localhost:3000", // For local development (if you use Create React App's default dev port)
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, // Important for cookies, authorization headers etc.
+  })
+);
 
 app.use(express.json());
-app.use(cors());
 
 mongoose.connect(MongoDbUri);
 
