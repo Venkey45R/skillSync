@@ -1,28 +1,32 @@
-import React, { useEffect } from 'react';
-import login from '../assets/signin.jpg';
-import { FaGoogle } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import AlertBox from './AlertBox';
+import React, { useEffect } from "react";
+import login from "../assets/signin.jpg";
+import { FaGoogle } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import AlertBox from "./AlertBox";
 import axios from "axios";
-import { useState } from 'react';
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
-import {jwtDecode} from 'jwt-decode';
-import Cookies from 'js-cookie';
+import { useState } from "react";
+import { GoogleLogin, googleLogout } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [alert, setAlert] = useState({ show: false, message: "", type: "success" });
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
   const navigate = useNavigate();
+  const API_BASE = process.env.VITE_REACT_APP_API_URL;
 
-  useEffect(()=>{
-    if(Cookies.get('role') === "creator"){
-      navigate('/creator-home');
+  useEffect(() => {
+    if (Cookies.get("role") === "creator") {
+      navigate("/creator-home");
+    } else if (Cookies.get("role") === "contributor") {
+      navigate("/contributor-home");
     }
-    else if(Cookies.get('role') === "contributor"){
-      navigate('/contributor-home');
-    }
-  },[])
+  }, []);
 
   const showTempAlert = (message, type = "success") => {
     setAlert({ show: true, message, type });
@@ -31,108 +35,129 @@ function SignIn() {
     }, 2000);
   };
 
-  const handleSubmit = () =>{
-    if(email === "" || password === ""){
+  const handleSubmit = () => {
+    if (email === "" || password === "") {
       showTempAlert("Fields can't be empty", "error");
-    }
-    else{
-      axios.post('http://localhost:3000/signin', {email, password}).then((res) =>{
-        if(res.data.message === "success"){
-          Cookies.set('token', res.data.token, {expires: 7});
-          localStorage.setItem('id', res.data.id);
+    } else {
+      axios.post(`${API_BASE}/signin`, { email, password }).then((res) => {
+        if (res.data.message === "success") {
+          Cookies.set("token", res.data.token, { expires: 7 });
+          localStorage.setItem("id", res.data.id);
           showTempAlert("Login successful", "success");
-          Cookies.set('role', res.data.role);
-          if(res.data.isOnBoarded === false){
-            navigate('/details', {state: res.data.id});
-          }
-          else{
-            if(res.data.role === "creator"){
-              navigate('/creator-home');
-            }
-            else{
-              navigate('/contributor-home');
+          Cookies.set("role", res.data.role);
+          if (res.data.isOnBoarded === false) {
+            navigate("/details", { state: res.data.id });
+          } else {
+            if (res.data.role === "creator") {
+              navigate("/creator-home");
+            } else {
+              navigate("/contributor-home");
             }
           }
-        }
-        else{
-          if(res.data === "user not found"){
+        } else {
+          if (res.data === "user not found") {
             showTempAlert("User not found", "error");
-          }
-          else if(res.data === "password incorrect"){
+          } else if (res.data === "password incorrect") {
             showTempAlert("Password incorrect", "error");
-          }
-          else{
+          } else {
             showTempAlert("Something went wrong", "error");
           }
         }
-      })
+      });
     }
-  }
+  };
 
-  const handleGoogleSuccess = (credential) =>{
+  const handleGoogleSuccess = (credential) => {
     const email = credential.email;
     const firstName = credential.name;
-    axios.post('http://localhost:3000/google', {email, firstName}).then((res)=>{
-      if(res.data.message === "success"){
-        Cookies.set('token', res.data.token, {expires: 7});
-        Cookies.set('role', res.data.role);
-        localStorage.setItem('id', res.data.id);
-        if(res.data.isOnBoarded === false){
-          navigate('/details', {state: res.data.id});
-        }
-        else{
-          if(res.data.role === "creator"){
-            navigate('/creator-home', {state: res.data.id});
-          }
-          else{
-            navigate('/contributor-home');
+    axios.post(`${API_BASE}/google`, { email, firstName }).then((res) => {
+      if (res.data.message === "success") {
+        Cookies.set("token", res.data.token, { expires: 7 });
+        Cookies.set("role", res.data.role);
+        localStorage.setItem("id", res.data.id);
+        if (res.data.isOnBoarded === false) {
+          navigate("/details", { state: res.data.id });
+        } else {
+          if (res.data.role === "creator") {
+            navigate("/creator-home", { state: res.data.id });
+          } else {
+            navigate("/contributor-home");
           }
         }
-      }
-      else{
+      } else {
         showTempAlert("something went wrong", "error");
-        navigate('/signup');
+        navigate("/signup");
       }
-    })
-  }
-  
+    });
+  };
+
   return (
-    <div className='items-stretch justify-center block w-full min-h-screen p-10 px-10 text-white bg-black lg:flex lg:px-40'>
+    <div className="items-stretch justify-center block w-full min-h-screen p-10 px-10 text-white bg-black lg:flex lg:px-40">
       {alert.show && (
         <div className="fixed z-50 transform -translate-x-1/2 top-5 left-1/2">
-          <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
+          <AlertBox
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert({ ...alert, show: false })}
+          />
         </div>
       )}
-      <div className='flex items-center justify-center w-full p-10 bg-white/10 lg:w-1/2 lg:rounded-l-3xl'>
-        <div className='w-full'>
-          <h2 className='mt-3 mb-3 text-xl font-bold text-center lg:mt-5 lg:text-2xl'>Welcome to Skill Sync</h2>
-          <p className='mb-6 text-center'>Enter your credentials to access your account</p>
-          <label className='ml-3'>Email:</label>
+      <div className="flex items-center justify-center w-full p-10 bg-white/10 lg:w-1/2 lg:rounded-l-3xl">
+        <div className="w-full">
+          <h2 className="mt-3 mb-3 text-xl font-bold text-center lg:mt-5 lg:text-2xl">
+            Welcome to Skill Sync
+          </h2>
+          <p className="mb-6 text-center">
+            Enter your credentials to access your account
+          </p>
+          <label className="ml-3">Email:</label>
           <input
-            type='email'
-            placeholder='abc@gmail.com'
-            className='w-full px-6 py-3 my-2 mb-4 text-sm rounded-2xl bg-white/20'
+            type="email"
+            placeholder="abc@gmail.com"
+            className="w-full px-6 py-3 my-2 mb-4 text-sm rounded-2xl bg-white/20"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <label className='ml-3'>Password:</label>
+          <label className="ml-3">Password:</label>
           <input
-            type='password'
-            placeholder='Password'
-            className='w-full px-6 py-3 my-2 mb-4 text-sm rounded-2xl bg-white/20'
+            type="password"
+            placeholder="Password"
+            className="w-full px-6 py-3 my-2 mb-4 text-sm rounded-2xl bg-white/20"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className='w-full py-2 my-2 text-white bg-blue-500 lg:my-4 rounded-2xl' onClick={handleSubmit}>Continue</button>
-          <p className='my-4 text-center lg:my-4'>---------- or ----------</p>
-          <div className='flex justify-center my-6'>
-              <GoogleLogin onSuccess={(credentialResponse) => {
+          <button
+            className="w-full py-2 my-2 text-white bg-blue-500 lg:my-4 rounded-2xl"
+            onClick={handleSubmit}
+          >
+            Continue
+          </button>
+          <p className="my-4 text-center lg:my-4">---------- or ----------</p>
+          <div className="flex justify-center my-6">
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
                 handleGoogleSuccess(jwtDecode(credentialResponse.credential));
-              }} onError={() => alert("Google login failed")} auto_select={true}  type='icon' shape='circle' theme='filled_black' text='continue_with'/> 
+              }}
+              onError={() => alert("Google login failed")}
+              auto_select={true}
+              type="icon"
+              shape="circle"
+              theme="filled_black"
+              text="continue_with"
+            />
           </div>
-          <p className='my-3 text-sm text-center'>Don't have an account? <Link to="/signup" className='text-blue-500 underline'>Sign up</Link></p>
+          <p className="my-3 text-sm text-center">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-blue-500 underline">
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
-      <div className='relative w-full lg:w-1/2'>
-        <img src={login} alt='Sign In Visual' className='object-cover w-full h-full rounded-none lg:rounded-r-3xl' />
+      <div className="relative w-full lg:w-1/2">
+        <img
+          src={login}
+          alt="Sign In Visual"
+          className="object-cover w-full h-full rounded-none lg:rounded-r-3xl"
+        />
       </div>
     </div>
   );
