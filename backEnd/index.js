@@ -25,7 +25,7 @@ const upload = multer({ storage });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const MongoDbUri =
-  import.meta.env.MONGODB_URI || "mongodb://localhost:27017/skillSync";
+  process.env.MONGODB_URI || "mongodb://localhost:27017/skillSync"; // <--- CORRECTED
 
 const allowedOrigins = [
   "http://c004cwsgsckog8kk8cw4sswo.147.93.104.185.sslip.io", // Your frontend URL
