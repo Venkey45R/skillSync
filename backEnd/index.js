@@ -24,13 +24,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const MongoDbUri =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/skillSync";
 
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect(
-  "mongodb://root:33giSW8dzMzpFc6w61Y6mHA943UewkPDBAewsHRTmJXh2yEtgUigbBSFepYUP4qG@u80w8kgcc0s0ccc8kc4sk8ks:27017/?directConnection=true"
-);
+mongoose.connect(MongoDbUri);
 
 app.post("/signup", async (req, res) => {
   try {
