@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cors());
 
 mongoose.connect(
-  "mongodb+srv://venki:venki45R@cluster0.zcda0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  "mongodb://root:33giSW8dzMzpFc6w61Y6mHA943UewkPDBAewsHRTmJXh2yEtgUigbBSFepYUP4qG@u80w8kgcc0s0ccc8kc4sk8ks:27017/?directConnection=true"
 );
 
 app.post("/signup", async (req, res) => {
