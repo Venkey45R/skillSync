@@ -9,6 +9,5 @@ export default defineConfig({
       external: [], // Keep this empty
     },
   },
-  // Removed optimizeDeps and resolve.alias as they might be interfering
-  // Rely on default Vite/Rollup behavior for module resolution
+  // Removed custom Rollup plugin and optimizeDeps as they are no longer needed
 });
