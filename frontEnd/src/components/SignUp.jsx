@@ -18,9 +18,7 @@ function SignUp() {
     type: "success",
   });
   const navigate = useNavigate();
-  const API_BASE =
-    process.env.VITE_REACT_APP_API_URL ||
-    "http://rs4g0008g4coo8wo4oggoccg.147.93.104.185.sslip.io";
+  const API_BASE = import.meta.env.VITE_REACT_APP_API_URL;
 
   useEffect(() => {
     if (Cookies.get("role") === "creator") {
