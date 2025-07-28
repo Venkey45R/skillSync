@@ -3,8 +3,9 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 
-# Add this line to ensure a clean slate
+# Add these lines to ensure a super clean slate
 RUN rm -rf node_modules
+RUN npm cache clean --force
 
 RUN npm install
 COPY . .
