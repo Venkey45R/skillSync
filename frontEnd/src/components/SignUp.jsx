@@ -45,6 +45,8 @@ function SignUp() {
     } else if (!email.includes("@")) {
       showTempAlert("Email invalid", "error");
     } else {
+      const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+      console.log("API_BASE URL:", API_BASE_URL);
       axios
         .post(`${API_BASE}/signup`, { firstName, email, password })
         .then((res) => {
