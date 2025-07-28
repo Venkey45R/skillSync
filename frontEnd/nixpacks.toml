@@ -1,0 +1,10 @@
+[phases.setup]
+nixPkgs = ["nodejs_22"] # Explicitly use Node.js 22
+
+[phases.build]
+commands = ["npm install", "npm run build"] # Separate install and build for clarity
+
+[phases.start]
+# For static sites, Nixpacks automatically sets up a web server (like Caddy).
+# You typically don't need a `cmd` here unless you have a custom server.
+# If it fails without it, we can add a simple server command later.
