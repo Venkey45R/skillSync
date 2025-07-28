@@ -31,6 +31,10 @@ function OwnProjectListing() {
             setLoading(false);
         }
     },[id])
+
+    const showDetails = (project) =>{
+        navigate('/project_details', {state: project});
+    }
     
   return (
     <div className='z-50 min-h-screen text-white bg-black'>
@@ -62,7 +66,7 @@ function OwnProjectListing() {
                                             <p className='mb-2 text-sm'><span className="mt-6 font-bold">Expected Duration: </span>{project.expectedDuration}</p>
                                             <p className="mb-2 text-sm"><span className="mt-6 font-bold">Contributor should: </span>{project.contributionGuidelines}</p>
                                             <p className='mb-4 text-sm'><span className='mt-6 font-bold'>Pending Application: </span>{project.pendingRequests.length}</p>
-                                            <button className='w-full py-2 mt-auto text-white bg-blue-500 rounded-2xl'>Update</button>
+                                            <button className='w-full py-2 mt-auto text-white bg-blue-500 rounded-2xl' onClick={(e) => {showDetails(project)}}>See Details</button>
                                         </div>
                                     ))
                                 }

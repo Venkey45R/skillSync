@@ -16,6 +16,7 @@ import ReceivedApplications from './components/ReceivedApplications';
 import Contributors from './components/Contributors';
 import MyProjects from './components/MyProjects';
 import Tasks from './components/Tasks';
+import ProjectDetails from './components/ProjectDetails';
 function App() {
   return(
     <div>
@@ -38,6 +39,7 @@ function App() {
           <Route path='/contributors' element={<Contributors />} />
           <Route path='/my-projects' element={<MyProjects />} />
           <Route path='/tasks' element={<Tasks />} />
+          <Route path='/project_details' element={<ProjectDetails />} />
         </Routes>
       </BrowserRouter>
     </div>
